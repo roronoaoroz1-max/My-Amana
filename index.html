@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
   <title>My Amanah – Family Funds</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -12,52 +13,366 @@
       <div class="logo">A</div>
       <h1>My Amanah</h1>
       <p>Family Funds Manager</p>
-      <label>Email</label>
+
+      <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" required>
-      <label>Password</label>
+
+      <label for="password">Password</label>
       <input id="password" type="password" autocomplete="current-password" required>
+
       <button id="loginButton" type="submit">Sign in</button>
-      <div id="loginMessage" class="error"></div>
+      <div id="loginMessage" class="error" aria-live="polite"></div>
     </form>
   </section>
 
   <main id="appView" class="app hidden">
     <header>
       <div>
-        <small>FAMILY MONEY DASHBOARD</small>
+        <small>FAMILY MONEY MANAGER</small>
         <h1>My Amanah</h1>
         <p id="signedInUser"></p>
       </div>
+
       <div class="actions">
-        <button id="refreshButton" class="light">Refresh</button>
-        <button id="logoutButton" class="danger">Sign out</button>
+        <button id="refreshButton" class="light" type="button">Refresh</button>
+        <button id="logoutButton" class="danger" type="button">Sign out</button>
       </div>
     </header>
 
-    <div id="appMessage" class="error-box hidden"></div>
+    <nav class="tabs" aria-label="App sections">
+      <button class="tab active" data-page="dashboardPage" type="button">Dashboard</button>
+      <button class="tab" data-page="loansPage" type="button">Loans</button>
+      <button class="tab" data-page="paymentsPage" type="button">Payments</button>
+      <button class="tab" data-page="transactionsPage" type="button">Funds</button>
+    </nav>
 
-    <section class="summary">
-      <article class="card"><span>Dad’s total managed</span><strong id="dadTotal">MVR 0.00</strong></article>
-      <article class="card"><span>Dad’s available cash</span><strong id="dadAvailable">MVR 0.00</strong></article>
-      <article class="card"><span>Dad’s money loaned</span><strong id="dadLoaned">MVR 0.00</strong></article>
-      <article class="card"><span>Mal’s dollar savings</span><strong id="malSavings">USD 0.00</strong></article>
-      <article class="card"><span>Total you owe</span><strong id="iOwe">MVR 0.00</strong></article>
-      <article class="card"><span>Total owed to you</span><strong id="owedToMe">MVR 0.00</strong></article>
+    <div id="appMessage" class="notice hidden" aria-live="polite"></div>
+
+    <!-- DASHBOARD -->
+    <section id="dashboardPage" class="page">
+      <section class="summary">
+        <article class="card"><span>Dad’s total managed</span><strong id="dadTotal">MVR 0.00</strong></article>
+        <article class="card"><span>Dad’s available cash</span><strong id="dadAvailable">MVR 0.00</strong></article>
+        <article class="card"><span>Dad’s money loaned</span><strong id="dadLoaned">MVR 0.00</strong></article>
+        <article class="card"><span>Mal’s dollar savings</span><strong id="malSavings">USD 0.00</strong></article>
+        <article class="card"><span>Total you owe</span><strong id="iOwe">MVR 0.00</strong></article>
+        <article class="card"><span>Total owed to you</span><strong id="owedToMe">MVR 0.00</strong></article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <small>ACCOUNT POSITION</small>
+            <h2>Funds and savings</h2>
+          </div>
+        </div>
+        <div id="accountsList" class="accounts"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <small>GROUPED TOTALS</small>
+            <h2>Loans by person</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Lender</th>
+                <th>Borrower</th>
+                <th>Borrowed</th>
+                <th>Repaid</th>
+                <th>Remaining</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="loansTableBody"><tr><td colspan="6">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
     </section>
 
-    <section class="panel">
-      <h2>Funds and savings</h2>
-      <div id="accountsList" class="accounts"></div>
-    </section>
+    <!-- LOANS -->
+    <section id="loansPage" class="page hidden">
+      <div class="two-column">
+        <section class="panel no-margin">
+          <div class="panel-title">
+            <div>
+              <small>NEW RECORD</small>
+              <h2>Add a loan</h2>
+            </div>
+          </div>
 
-    <section class="panel">
-      <h2>Loans by person</h2>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Lender</th><th>Borrower</th><th>Borrowed</th><th>Repaid</th><th>Remaining</th><th>Status</th></tr></thead>
-          <tbody id="loansTableBody"><tr><td colspan="6">Loading…</td></tr></tbody>
-        </table>
+          <form id="loanForm" class="form-grid">
+            <div>
+              <label for="loanLender">Lender</label>
+              <select id="loanLender" required></select>
+            </div>
+            <div>
+              <label for="loanBorrower">Borrower</label>
+              <select id="loanBorrower" required></select>
+            </div>
+            <div>
+              <label for="loanAccount">Source fund</label>
+              <select id="loanAccount">
+                <option value="">None / personal liability</option>
+              </select>
+            </div>
+            <div>
+              <label for="loanCurrency">Currency</label>
+              <select id="loanCurrency" required>
+                <option value="MVR">MVR</option>
+                <option value="USD">USD</option>
+              </select>
+            </div>
+            <div>
+              <label for="loanAmount">Loan amount</label>
+              <input id="loanAmount" type="number" min="0.01" step="0.01" required>
+            </div>
+            <div>
+              <label for="loanDate">Loan date</label>
+              <input id="loanDate" type="date">
+            </div>
+            <div class="checkbox-field">
+              <input id="loanDateEstimated" type="checkbox">
+              <label for="loanDateEstimated">Date is estimated</label>
+            </div>
+            <div>
+              <label for="installmentAmount">Installment amount</label>
+              <input id="installmentAmount" type="number" min="0.01" step="0.01" placeholder="Optional">
+            </div>
+            <div>
+              <label for="installmentFrequency">Frequency</label>
+              <select id="installmentFrequency">
+                <option value="">Not set</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div>
+              <label for="loanNextDate">Next payment date</label>
+              <input id="loanNextDate" type="date">
+            </div>
+            <div class="full-width">
+              <label for="loanNotes">Notes</label>
+              <textarea id="loanNotes" rows="3" placeholder="Reason or other details"></textarea>
+            </div>
+            <div class="full-width form-actions">
+              <button type="submit">Save loan</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel no-margin">
+          <div class="panel-title">
+            <div>
+              <small>INSTALLMENT PLAN</small>
+              <h2>Update schedule</h2>
+            </div>
+          </div>
+
+          <form id="scheduleForm" class="form-grid">
+            <div class="full-width">
+              <label for="scheduleLoan">Loan</label>
+              <select id="scheduleLoan" required></select>
+            </div>
+            <div>
+              <label for="scheduleAmount">Installment amount</label>
+              <input id="scheduleAmount" type="number" min="0.01" step="0.01">
+            </div>
+            <div>
+              <label for="scheduleFrequency">Frequency</label>
+              <select id="scheduleFrequency">
+                <option value="">Not set</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div>
+              <label for="scheduleNextDate">Next payment date</label>
+              <input id="scheduleNextDate" type="date">
+            </div>
+            <div>
+              <label for="scheduleStatus">Status</label>
+              <select id="scheduleStatus">
+                <option value="active">Active</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="full-width form-actions">
+              <button type="submit">Update schedule</button>
+            </div>
+          </form>
+        </section>
       </div>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <small>DATES AND BALANCES</small>
+            <h2>Individual loans</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="wide-table">
+            <thead>
+              <tr>
+                <th>Loan date</th>
+                <th>Lender</th>
+                <th>Borrower</th>
+                <th>Original</th>
+                <th>Installment</th>
+                <th>Next payment</th>
+                <th>Repaid</th>
+                <th>Remaining</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="individualLoansBody"><tr><td colspan="10">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- PAYMENTS -->
+    <section id="paymentsPage" class="page hidden">
+      <section class="panel no-margin form-panel">
+        <div class="panel-title">
+          <div>
+            <small>REPAYMENT</small>
+            <h2>Record a payment</h2>
+          </div>
+        </div>
+
+        <form id="paymentForm" class="form-grid">
+          <div class="full-width">
+            <label for="paymentLoan">Loan</label>
+            <select id="paymentLoan" required></select>
+            <small id="paymentLoanHelp" class="field-help"></small>
+          </div>
+          <div>
+            <label for="paymentDate">Payment date</label>
+            <input id="paymentDate" type="date" required>
+          </div>
+          <div>
+            <label for="paymentAmount">Amount paid</label>
+            <input id="paymentAmount" type="number" min="0.01" step="0.01" required>
+          </div>
+          <div>
+            <label for="paymentMethod">Method</label>
+            <input id="paymentMethod" type="text" placeholder="Cash, bank transfer…">
+          </div>
+          <div>
+            <label for="paymentNextDate">Next payment date after this</label>
+            <input id="paymentNextDate" type="date">
+          </div>
+          <div class="full-width">
+            <label for="paymentNotes">Notes</label>
+            <textarea id="paymentNotes" rows="3"></textarea>
+          </div>
+          <div class="full-width form-actions">
+            <button type="submit">Save payment</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <small>PAYMENT DATES</small>
+            <h2>Repayment history</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Loan</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="paymentsHistoryBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+
+    <!-- FUNDS / ACCOUNT TRANSACTIONS -->
+    <section id="transactionsPage" class="page hidden">
+      <section class="panel no-margin form-panel">
+        <div class="panel-title">
+          <div>
+            <small>UPDATE ACCOUNT VALUE</small>
+            <h2>Add a fund transaction</h2>
+          </div>
+        </div>
+
+        <p class="explanation">
+          Use deposits and withdrawals for real money movement. Use adjustments only to correct an earlier balance while keeping a visible history.
+        </p>
+
+        <form id="transactionForm" class="form-grid">
+          <div>
+            <label for="transactionAccount">Account</label>
+            <select id="transactionAccount" required></select>
+          </div>
+          <div>
+            <label for="transactionType">Type</label>
+            <select id="transactionType" required>
+              <option value="deposit">Deposit</option>
+              <option value="withdrawal">Withdrawal</option>
+              <option value="adjustment_in">Adjustment in</option>
+              <option value="adjustment_out">Adjustment out</option>
+            </select>
+          </div>
+          <div>
+            <label for="transactionDate">Date</label>
+            <input id="transactionDate" type="date" required>
+          </div>
+          <div>
+            <label for="transactionAmount">Amount</label>
+            <input id="transactionAmount" type="number" min="0.01" step="0.01" required>
+          </div>
+          <div class="full-width">
+            <label for="transactionDescription">Description</label>
+            <textarea id="transactionDescription" rows="3" placeholder="What changed and why?"></textarea>
+          </div>
+          <div class="full-width form-actions">
+            <button type="submit">Save transaction</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="panel-title">
+          <div>
+            <small>ACCOUNT HISTORY</small>
+            <h2>Deposits, withdrawals and adjustments</h2>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Account</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsHistoryBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
