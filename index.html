@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>My Amanah – Family Funds</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section id="loginView" class="center">
+    <form id="loginForm" class="card login-card">
+      <div class="logo">A</div>
+      <h1>My Amanah</h1>
+      <p>Family Funds Manager</p>
+      <label>Email</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label>Password</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <button id="loginButton" type="submit">Sign in</button>
+      <div id="loginMessage" class="error"></div>
+    </form>
+  </section>
+
+  <main id="appView" class="app hidden">
+    <header>
+      <div>
+        <small>FAMILY MONEY DASHBOARD</small>
+        <h1>My Amanah</h1>
+        <p id="signedInUser"></p>
+      </div>
+      <div class="actions">
+        <button id="refreshButton" class="light">Refresh</button>
+        <button id="logoutButton" class="danger">Sign out</button>
+      </div>
+    </header>
+
+    <div id="appMessage" class="error-box hidden"></div>
+
+    <section class="summary">
+      <article class="card"><span>Dad’s total managed</span><strong id="dadTotal">MVR 0.00</strong></article>
+      <article class="card"><span>Dad’s available cash</span><strong id="dadAvailable">MVR 0.00</strong></article>
+      <article class="card"><span>Dad’s money loaned</span><strong id="dadLoaned">MVR 0.00</strong></article>
+      <article class="card"><span>Mal’s dollar savings</span><strong id="malSavings">USD 0.00</strong></article>
+      <article class="card"><span>Total you owe</span><strong id="iOwe">MVR 0.00</strong></article>
+      <article class="card"><span>Total owed to you</span><strong id="owedToMe">MVR 0.00</strong></article>
+    </section>
+
+    <section class="panel">
+      <h2>Funds and savings</h2>
+      <div id="accountsList" class="accounts"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Loans by person</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Lender</th><th>Borrower</th><th>Borrowed</th><th>Repaid</th><th>Remaining</th><th>Status</th></tr></thead>
+          <tbody id="loansTableBody"><tr><td colspan="6">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
